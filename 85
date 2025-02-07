@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Surprise</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            background-color: #ffdde1;
+            color: #d63384;
+            padding: 50px;
+            border: 10px solid white;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+        #countdown {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        #videoContainer {
+            display: none;
+            margin-top: 20px;
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            margin: auto;
+        }
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background: #f49ac2;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            cursor: pointer;
+            border: 4px solid white;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+            image-rendering: pixelated;
+        }
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: #d16ba5;
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            border-bottom: 4px solid white;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .envelope p {
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            z-index: 1;
+        }
+        .open-animation {
+            animation: openEnvelope 1s forwards;
+        }
+        @keyframes openEnvelope {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-220px); opacity: 0; }
+        }
+        .message {
+            font-size: 36px;
+            white-space: nowrap;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        #text {
+            display: inline-block;
+            border-right: 3px solid #d63384;
+        }
+    </style>
+    <script>
+        const clickSound = new Audio("https://www.soundjay.com/button/beep-07.wav");
+
+        // Function to simulate typing the text
+        function typeText() {
+            const text = "I LOVE YOU.";
+            let index = 0;
+            const textElement = document.getElementById("text");
+            const typingInterval = setInterval(() => {
+                textElement.innerHTML += text[index];
+                clickSound.play(); // Play sound on each letter typed
+                index++;
+                if (index === text.length) {
+                    clearInterval(typingInterval); // Stop the interval when all text is typed
+                }
+            }, 300); // Change the typing speed here (300ms per letter)
+        }
+
+        function updateCountdown() {
+            const releaseDate = new Date("February 14, 2025 00:00:00").getTime();
+            const now = new Date().getTime();
+            const timeLeft = releaseDate - now;
+
+            if (timeLeft <= 0) {
+                document.getElementById("countdown").style.display = "none";
+                document.getElementById("envelope").addEventListener("click", function() {
+                    this.classList.add("open-animation");
+                    setTimeout(() => {
+                        this.style.display = "none";
+                        document.getElementById("videoContainer").style.display = "block";
+                    }, 1000);
+                });
+            } else {
+                let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                document.getElementById("countdown").innerHTML = ` ${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }
+        }
+
+        // Listen for video end event to trigger typing
+        function onVideoEnd() {
+            document.getElementById("videoContainer").style.display = "none";
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message");
+            messageDiv.innerHTML = '<span id="text"></span>';
+            document.body.appendChild(messageDiv);
+            typeText(); // Start typing "I LOVE YOU"
+        }
+
+        // Trigger the countdown function every second
+        setInterval(updateCountdown, 1000);
+
+        window.onload = function() {
+            const iframe = document.querySelector("iframe");
+            iframe.addEventListener("ended", onVideoEnd);
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>💖 NINJA & BOOBOO 💖</h1>
+    <div id="countdown"></div>
+    <div id="envelope" class="envelope">
+        <p>Click to Open</p>
+    </div>
+    <div id="videoContainer">
+        <p>Happy Valentine's Day! Here's your special video:</p>
+        <iframe width="280" height="157" src="https://www.youtube.com/embed/Ms7wQI_Q5iU" frameborder="0" allowfullscreen></iframe>
+    </div>
+</body>
+</html>
